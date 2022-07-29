@@ -1,0 +1,100 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+
+
+    <link href="static/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="static/assets/global/css/components.css" rel="stylesheet" type="text/css"/>
+    <link href="static/assets/admin/pages/css/login.css" rel="stylesheet" type="text/css"/>
+    <script src="static/assets/global/plugins/jquery-1.11.0.min.js" type="text/javascript">
+    </script>
+</head>
+
+<body class="login">
+<div class="content">
+    <h3 class="form-title">sign in</h3>
+    <div class="form-group">
+        <label class="control-label">telphone</label>
+        <div>
+            <!--用ajax请求完成前后分离，而非post，所以既要name又要id-->
+            <input class="form-control" type="text" placeholder="手机号" name="telphone" id="telphone"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label">password</label>
+        <div>
+            <!--用ajax请求完成前后分离，而非post，所以既要name又要id-->
+            <input class="form-control" type="password" placeholder="密码" name="password" id="password"/>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button class="btn blue" id="login" type="submit">
+            sign in
+        </button>
+        <button class="btn green" id="register" type="submit">
+            sign up
+        </button>
+    </div>
+</div>
+
+</body>
+<script>
+    jQuery(document).ready(function (){
+        $("#register").on("click",function() {
+            window.location.href="register.html";
+
+        });
+
+
+        //绑定otp的click事件用于向后端发送获取手机验证码的请求
+        $("#login").on("click",function(){
+            var telphone = $("#telphone").val();
+            var password = $("#password").val();
+            if(telphone == null||telphone == ""){
+                alert("telphone cannot be null");
+                return false;
+
+            }
+            if(password == null||password == ""){
+                alert("password cannot be null");
+                return false;
+
+            }
+
+            $.ajax({
+                type:"POST",
+                contentType:"application/x-www-form-urlencoded",
+                url:"http://localhost:8080/user/login",
+                data:{
+                    "telphone":$("#telphone").val(),
+                    "password":password,
+
+
+
+                },
+                <!--允许跨域的一个授信的请求，以使其session变成跨域可授信-->
+                xhrFields:{withCredentials:true},
+
+                success:function(data){
+                    if(data.status=="success"){
+                        alert("success");
+                        window.location.href="/listitem.html"
+
+                    }else{
+                        alert("failed,because"+data.data.errMsg);
+                    }
+
+                },
+                error:function (data){
+                    alert("failed,because"+data.responseText);
+
+                }
+
+            });
+            return false;
+
+        });
+    });
+</script>
+</html>
